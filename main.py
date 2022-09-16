@@ -1,5 +1,9 @@
+import collections
 import datetime
 from pathlib import Path
+from pprint import pp, pprint
+from turtle import clear
+from unicodedata import category
 
 import pandas
 
@@ -7,7 +11,9 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+WINERY_FOUNDED = 1920
 WINE_FILENAME = 'wine.xlsx'
+WINE2_FILENAME = 'wine2.xlsx'
 
 
 def get_age_suffix(age: int) ->  str:
@@ -21,9 +27,22 @@ def get_age_suffix(age: int) ->  str:
 
 
 def load_wine_from_xml(filepath: Path) -> list:
-    wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1', usecols=['Название', 'Сорт', 'Цена', 'Картинка'])
+    wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1', 
+                                        usecols=['Название', 'Сорт', 'Цена', 'Картинка'])
     return wine_excel_file.to_dict(orient='record')
 
+
+def load_wine2_from_xml(filepath: Path) -> dict:
+    wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1',
+                                        na_values=['nan'], keep_default_na=False
+                                        usecols=['Категория', 'Название', 'Сорт', 'Цена', 'Картинка'])
+    wine_records = wine_excel_file.to_dict(orient='record')
+
+    wines = collections.defaultdict(list)
+    for wine in wine_records:
+        category = wine['Категория']
+        wines[category].append(wine)
+    return wines
 
 
 env = Environment(
@@ -33,16 +52,16 @@ env = Environment(
 
 template = env.get_template('template.html')
 
-winery_founded = 1920
+
 today = datetime.date.today()
-winery_age = today.year - winery_founded
+winery_age = today.year - WINERY_FOUNDED
 winery_age_suffix = get_age_suffix(winery_age)
 
-wine_filepath = Path(WINE_FILENAME)
-wines = load_wine_from_xml(wine_filepath)
-
+wine2_filepath = Path(WINE2_FILENAME)
+wine_categories = load_wine2_from_xml(wine2_filepath)
+        
 rendered_page = template.render(
-    wines = wines
+    wine_categories = wine_categories
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
