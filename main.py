@@ -1,4 +1,7 @@
+import datetime
+
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from platform import win32_edition
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -9,13 +12,12 @@ env = Environment(
 
 template = env.get_template('template.html')
 
+winery_founded = 1920
+today = datetime.date.today()
+winery_age = today.year - winery_founded
+
 rendered_page = template.render(
-    cap1_title="Красная кепка",
-    cap1_text="$ 100.00",
-    cap2_title="Чёрная кепка",
-    cap2_text="$ 120.00",
-    cap3_title="Ещё одна чёрная кепка",
-    cap3_text="$ 90.00",
+    winery_age=winery_age,
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
@@ -23,3 +25,6 @@ with open('index.html', 'w', encoding="utf8") as file:
 
 server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
 server.serve_forever()
+
+
+
