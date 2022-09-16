@@ -34,7 +34,7 @@ def load_wine_from_xml(filepath: Path) -> list:
 
 def load_wine2_from_xml(filepath: Path) -> dict:
     wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1',
-                                        na_values=['nan'], keep_default_na=False
+                                        na_values=['nan'], keep_default_na=False,
                                         usecols=['Категория', 'Название', 'Сорт', 'Цена', 'Картинка'])
     wine_records = wine_excel_file.to_dict(orient='record')
 
