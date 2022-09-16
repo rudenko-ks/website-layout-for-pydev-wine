@@ -11,9 +11,8 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-WINERY_FOUNDED = 1920
-WINE_FILENAME = 'wine.xlsx'
-WINE2_FILENAME = 'wine2.xlsx'
+WINERY_YEAR_FOUNDED = 1920
+WINE_FILENAME = 'wine3.xlsx'
 
 
 def get_age_suffix(age: int) ->  str:
@@ -26,16 +25,10 @@ def get_age_suffix(age: int) ->  str:
     return suffix
 
 
-def load_wine_from_xml(filepath: Path) -> list:
-    wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1', 
-                                        usecols=['Название', 'Сорт', 'Цена', 'Картинка'])
-    return wine_excel_file.to_dict(orient='record')
-
-
-def load_wine2_from_xml(filepath: Path) -> dict:
+def load_wine_categories(filepath: Path) -> dict:
     wine_excel_file = pandas.read_excel(filepath, sheet_name='Лист1',
                                         na_values=['nan'], keep_default_na=False,
-                                        usecols=['Категория', 'Название', 'Сорт', 'Цена', 'Картинка'])
+                                        usecols=['Категория', 'Название', 'Сорт', 'Цена', 'Картинка', 'Акция'])
     wine_records = wine_excel_file.to_dict(orient='record')
 
     wines = collections.defaultdict(list)
@@ -52,13 +45,12 @@ env = Environment(
 
 template = env.get_template('template.html')
 
-
 today = datetime.date.today()
-winery_age = today.year - WINERY_FOUNDED
+winery_age = today.year - WINERY_YEAR_FOUNDED
 winery_age_suffix = get_age_suffix(winery_age)
 
-wine2_filepath = Path(WINE2_FILENAME)
-wine_categories = load_wine2_from_xml(wine2_filepath)
+wine_filepath = Path(WINE_FILENAME)
+wine_categories = load_wine_categories(wine_filepath)
         
 rendered_page = template.render(
     wine_categories = wine_categories
