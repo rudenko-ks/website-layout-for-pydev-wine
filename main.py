@@ -12,7 +12,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 WINERY_YEAR_FOUNDED = 1920
-WINE_FILENAME = 'wine3.xlsx'
+WINE_FILENAME = 'wine.xlsx'
 
 
 def get_age_suffix(age: int) ->  str:
