@@ -67,7 +67,9 @@ def main():
     )
     template = env.get_template('template.html')
     rendered_page = template.render(
-        wine_categories = wine_categories
+        wine_categories = wine_categories,
+        winery_age = winery_age, 
+        winery_age_suffix = winery_age_suffix
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
