@@ -35,27 +35,30 @@ def load_wine_categories(filepath: Path) -> dict:
     return wines
 
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+def main():
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
 
-template = env.get_template('template.html')
+    template = env.get_template('template.html')
 
-today = datetime.date.today()
-winery_age = today.year - WINERY_YEAR_FOUNDED
-winery_age_suffix = get_age_suffix(winery_age)
+    today = datetime.date.today()
+    winery_age = today.year - WINERY_YEAR_FOUNDED
+    winery_age_suffix = get_age_suffix(winery_age)
 
-wine_filepath = Path(WINE_FILENAME)
-wine_categories = load_wine_categories(wine_filepath)
-        
-rendered_page = template.render(
-    wine_categories = wine_categories
-)
+    wine_filepath = Path(WINE_FILENAME)
+    wine_categories = load_wine_categories(wine_filepath)
+            
+    rendered_page = template.render(
+        wine_categories = wine_categories
+    )
 
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
 
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
+if __name__ == '__main__':
+    main()
