@@ -36,7 +36,7 @@ def load_wine_categories(filepath: Path) -> dict:
     return wines
 
 
-def create_argparser() -> argparse.Namespace:
+def create_argparser(filepath: str) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="""\
         Скрипт запускает на локальной машине сайт-магазин по продаже вина.\n
@@ -45,20 +45,19 @@ def create_argparser() -> argparse.Namespace:
         директории с запускаемым скриптом, если не указан иной путь до файла.""",
         formatter_class=RawTextHelpFormatter
     )
-    parser.add_argument('-fp', '--filepath', help='Путь до файла с данными', type=str)
+    parser.add_argument('-fp', '--filepath', help='Путь до файла с данными', type=str, default=filepath)
     return parser.parse_args()
 
 
 def main():
-    args = create_argparser()
     filepath = os.getenv("FILEPATH", default='wine.xlsx')
-    if args.filepath: filepath = args.filepath
-        
-    wine_filepath = Path(filepath)
+    args = create_argparser(filepath)
+    wine_filepath = Path(args.filepath)
+
     wine_categories = load_wine_categories(wine_filepath)
 
     today = datetime.date.today()
-    winery_age = today.year - WINERY_YEAR_FOUNDED
+    winery_age = today.year - WINERY_FOUNDED_YEAR
     winery_age_suffix = get_age_suffix(winery_age)
     
     env = Environment(
