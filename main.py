@@ -10,7 +10,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import pandas
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-WINERY_YEAR_FOUNDED = 1920
+WINERY_FOUNDED_YEAR = 1920
 
 
 def get_age_suffix(age: int) ->  str:
